@@ -14,7 +14,7 @@
 ;;
 ;; I wanted to collect together all interesting articles I saw reading
 ;; news on my phone applications. I was already using Org mode to keep
-;; notes
+;; notes.
 ;;
 ;; The [[http://orgmode.org/manual/MobileOrg.html][MobileOrg]] app in
 ;; my Android phone is fiddly and does not do things the way I want,
@@ -133,6 +133,9 @@ mode.
       (org-dropbox-refile-timer-start)
     (org-dropbox-refile-timer-stop)))
 
+(defconst org-dropbox-version "20140923"
+  "Version for org-dropbox")
+
 (defcustom org-dropbox-note-dir "~/Dropbox/notes/"
   "Directory where Dropbox shared notes are added."
   :group 'org
@@ -242,6 +245,11 @@ repeat interval. The value is in seconds."
 (defun org-dropbox-refile-timer-stop ()
   "Stop running the refiler."
   (cancel-timer org-dropbox-refile-timer))
+
+(defun org-dropbox-version ()
+  "Tell the version"
+  (interactive)
+  (message org-dropbox-version))
 
 (provide 'org-dropbox)
 
