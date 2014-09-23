@@ -2,7 +2,7 @@
 
 ;;; Copyright (C) 2014 Heikki Lehvaslaiho <heikki.lehvaslaiho@gmail.com>
 
-;; Url: https://github.com//xxxx
+;; URL: https://github.com/heikkil/org-dropbox
 ;; Author: Heikki Lehvaslaiho <heikki.lehvaslaiho@gmail.com>
 ;; Version: 20140923
 ;; Package-Requires: ((org-mode "8.2"))
