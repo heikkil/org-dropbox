@@ -1,14 +1,12 @@
-;;; org-dropbox.el --- move notes from phone through Dropbox into org-mode datetree
+;;; org-dropbox.el --- move Dropbox notes from phone into org-mode datetree
 
 ;;; Copyright (C) 2014 Heikki Lehvaslaiho <heikki.lehvaslaiho@gmail.com>
 
 ;; URL: https://github.com/heikkil/org-dropbox
 ;; Author: Heikki Lehvaslaiho <heikki.lehvaslaiho@gmail.com>
 ;; Version: 20140923
-;; Package-Requires: ((org-mode "8.2") (emacs "24"))
+;; Package-Requires: ((names "0.5") (org-mode "8.2") (emacs "24"))
 ;; Keywords: Dropbox Android notes org-mode
-
-;;; (names "0.5") ?http://endlessparentheses.com/introducing-names-practical-namespaces-for-emacs-lisp.html
 
 ;;; Commentary:
 ;;
@@ -120,52 +118,47 @@
 (require 'org)
 
 ;;;###autoload
-(define-minor-mode org-dropbox-mode
+(define-namespace org-dropbox-
+
+:autoload
+(define-minor-mode mode
   "Minor mode adding Dropbox notes to datetree.
 
 With no argument, this command toggles the mode. Non-null prefix
 argument turns on the mode. Null prefix argument turns off the
 mode.
 "
-  ;; The initial value - Set to 1 to enable by default
-  :init-value nil
-  ;; The indicator for the mode line.
-  :lighter " Org-Dbox"
-  :global 1
-  ;; The minor mode keymap - examples
-  :keymap  `(
-            ;; (,(kbd "C-c C-a") . some-command)
-            ;; (,(kbd "C-c C-b") . other-command)
-            ;; ("\C-c\C-c" . "This works too")
-             )
-  (if org-dropbox-mode
-      (org-dropbox-refile-timer-start)
-    (org-dropbox-refile-timer-stop)))
+  :init-value nil                   ; Set to 1 to enable by default
+  :lighter " Org-Dbox"              ; The indicator for the mode line
+  :global 1                         ; Active in all buffers
+  (if mode
+      (refile-timer-start)
+    (refile-timer-stop)))
 
-(defconst org-dropbox-version "20140923"
+(defconst version "20141212"
   "Version for org-dropbox")
 
-(defcustom org-dropbox-note-dir "~/Dropbox/notes/"
+(defcustom note-dir "~/Dropbox/notes/"
   "Directory where Dropbox shared notes are added."
   :group 'org
   :type 'directory)
 
-(defcustom org-dropbox-datetree-file "~/Dropbox/org/reference.org"
+(defcustom datetree-file "~/Dropbox/org/reference.org"
   "File containing the datetree file to store formatted notes."
   :group 'org
   :type 'file)
 
-(defcustom org-dropbox-refile-timer-interval (* 60 60)
+(defcustom refile-timer-interval (* 60 60)
   "Repeat refiling every N seconds. Defaults to 3600 sec = 1 h"
   :group 'org
   :type 'int)
 
-(defun org-dropbox-datetree-file-entry-under-date (txt date)
+(defun datetree-file-entry-under-date (txt date)
   "Insert a node TXT into the date tree under DATE.
 
 Original - and functional - version of the
 `org-datetree-file-entry-under' function in org-datetree.el.
-from xxxxx
+from (xxxxx?)
 Only slightly modified.
 But, see the code about subtrees..."
   (org-datetree-find-date-create
@@ -175,13 +168,13 @@ But, see the code about subtrees..."
   (beginning-of-line)
   (insert txt))
 
-(defun org-dropbox-get-mtime (buffer-file-name)
+(defun get-mtime (buffer-file-name)
   "Get the modification time of a file (BUFFER-FILE-NAME)."
   (let* ((attrs (file-attributes (buffer-file-name)))
          (mtime (nth 5 attrs)))
     (format-time-string "%Y-%m-%d %T" mtime)))
 
-(defun org-dropbox-notes-to-datetree (dirname buffername)
+(defun notes-to-datetree (dirname buffername)
   "Process files in a directory DIRNAME and place the entries to BUFFERNAME."
   (let (files file file-content mtime lines header entry date counter)
     (setq counter 0)
@@ -191,7 +184,7 @@ But, see the code about subtrees..."
       (setq file-content (with-current-buffer
                              (find-file-noselect file)
                            (buffer-string)))
-      (setq mtime (org-dropbox-get-mtime file))
+      (setq mtime (get-mtime file))
 
       ;; massage the contents into list of lines -- optimise later
       ;;
@@ -223,40 +216,39 @@ But, see the code about subtrees..."
       (setq date (decode-time (org-read-date nil t mtime nil)))
       (with-current-buffer buffername
         (barf-if-buffer-read-only)
-        (org-dropbox-datetree-file-entry-under-date entry date))
+        (datetree-file-entry-under-date entry date))
       (setq counter (1+ counter))
       (delete-file file))
     (with-current-buffer buffername (save-buffer))
     (when (> counter 0)
       (message "org-dropbox: processed %d notes" counter))))
 
-(defun org-dropbox-refile-notes ()
+(defun refile-notes ()
   "Create `org-mode' entries from DropBox notes and place them in a datetree."
   (interactive)
   (let (buffername)
-    (when (file-exists-p org-dropbox-datetree-file)
-      (setq buffername (buffer-name (find-file-noselect org-dropbox-datetree-file)))
-      (org-dropbox-notes-to-datetree org-dropbox-note-dir buffername))))
+    (when (file-exists-p datetree-file)
+      (setq buffername (buffer-name (find-file-noselect datetree-file)))
+      (notes-to-datetree note-dir buffername))))
 
-(defun org-dropbox-refile-timer-start ()
+(defun refile-timer-start ()
   "Start running the refiler while pausing for given interval.
 
-The variable org-dropbox-refile-timer-interval determines the
+The variable refile-timer-interval determines the
 repeat interval. The value is in seconds."
-  (setq org-dropbox-refile-timer
+  (setq refile-timer
         (run-with-timer 0
-                        org-dropbox-refile-timer-interval
-                        'org-dropbox-refile-notes)))
+                        refile-timer-interval
+                        'refile-notes)))
 
-(defun org-dropbox-refile-timer-stop ()
+(defun refile-timer-stop ()
   "Stop running the refiler."
-  (cancel-timer org-dropbox-refile-timer))
+  (cancel-timer refile-timer))
 
-(defun org-dropbox-version ()
+(defun version ()
   "Tell the version"
   (interactive)
-  (message org-dropbox-version))
+  (message version))) ; closing names
 
 (provide 'org-dropbox)
-
 ;;; org-dropbox.el ends here
