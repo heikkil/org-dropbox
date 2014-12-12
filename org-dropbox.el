@@ -1,11 +1,11 @@
 ;;; org-dropbox.el --- move Dropbox notes from phone into org-mode datetree
 
-;;; Copyright (C) 2014 Heikki Lehvaslaiho <heikki.lehvaslaiho@gmail.com>
+;;; Copyright (C) 2014 Heikki Lehvaslaiho
 
 ;; URL: https://github.com/heikkil/org-dropbox
 ;; Author: Heikki Lehvaslaiho <heikki.lehvaslaiho@gmail.com>
 ;; Version: 20140923
-;; Package-Requires: ((names "0.5") (org-mode "8.2") (emacs "24"))
+;; Package-Requires: ((dash 2.2) (names "0.5") (org-mode "8.2") (emacs "24"))
 ;; Keywords: Dropbox Android notes org-mode
 
 ;;; Commentary:
@@ -90,12 +90,18 @@
 ;; code, so writing a whole package was a jump in the dark. The code has
 ;; been running reliably for some time now, but if you want to try the
 ;; code and be absolutely certain you do not lose your notes, comment
-;; expression =(delete-file file)= from the code.
+;; form =(delete-file file)= from the code.
 ;;
 ;; There are undoubtedly many things that can be done better. Feel
 ;; free to raise issues and submit pull requests.
 ;;
+;; ** ToDo
 ;;
+;; Find a way to add entries as the last rather than first childrens
+;; of the day header.
+;;
+
+
 ;; This file is not a part of GNU Emacs.
 
 ;;; License:
@@ -181,37 +187,33 @@ But, see the code about subtrees..."
     (setq files (directory-files dirname t "\\.txt$"))
     (while files
       (setq file (pop files))
-      (setq file-content (with-current-buffer
-                             (find-file-noselect file)
-                           (buffer-string)))
       (setq mtime (get-mtime file))
-
-      ;; massage the contents into list of lines -- optimise later
-      ;;
-      ;; remove tabs
-      (setq file-content (replace-regexp-in-string "\t" "" file-content))
-      ;; split some long title lines
-      (setq file-content (replace-regexp-in-string " ?[-!:|] " "\n" file-content))
-      ;; separate link from title
-      (setq file-content (replace-regexp-in-string " *http:" "\nhttp:" file-content))
-      ;; remove newly added new lines from the beginning of the string, if any
-      (setq file-content (replace-regexp-in-string "^\\(\n\\).*\\'" "" file-content nil nil 1))
-      ;; remove successive newlines
-      (setq lines (split-string (replace-regexp-in-string "\n+" "\n" file-content) "\n"))
-
-      ;; create header text into first element of lines
+      ;; file contents into a clean string
+      (setq file-content (->> (with-current-buffer
+                                  (find-file-noselect file)
+                                (buffer-string))
+                           (replace-regexp-in-string "\t" "") ; remove tabs
+                           (replace-regexp-in-string " ?[-!:|] " "\n") ; split some long title lines
+                           (replace-regexp-in-string " *http:" "\nhttp:") ; separate link from title
+                           (replace-regexp-in-string "^\\(\n\\).*\\'" "") ; remove optional novel new lines at head
+                           (replace-regexp-in-string "\n+" "\n") ; remove successive newlines
+                           ))
+      ;; list of lines from string
+      (setq lines (split-string file-content "\n"))
+      ;; create org header text to first element of lines
       (if (equal (length lines) 1)
+          ;; filename
           (setq lines (cons (concat "**** "
                                     (file-name-sans-extension (file-name-nondirectory file)))
                             lines))
+        ;; first line is the title
         (setcar lines (concat "**** " (car lines))))
-      ;; create the entry string
+      ;; create the org entry string
       (setq entry
             (mapconcat 'identity
                        (append lines
                                (list (concat "Entered on [" mtime "]\n")))
                        "\n"))
-
       ;; save in the datetree
       (setq date (decode-time (org-read-date nil t mtime nil)))
       (with-current-buffer buffername
