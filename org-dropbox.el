@@ -227,10 +227,9 @@ But, see the code about subtrees..."
   "Create `org-mode' entries from DropBox notes and place them in a datetree."
   (interactive)
   (let (buffername)
-    (if (file-exists-p org-dropbox-datetree-file)
-        (progn
-          (setq buffername (buffer-name (find-file-noselect org-dropbox-datetree-file)))
-          (org-dropbox-notes-to-datetree org-dropbox-note-dir buffername)))))
+    (when (file-exists-p org-dropbox-datetree-file)
+      (setq buffername (buffer-name (find-file-noselect org-dropbox-datetree-file)))
+      (org-dropbox-notes-to-datetree org-dropbox-note-dir buffername))))
 
 (defun org-dropbox-refile-timer-start ()
   "Start running the refiler while pausing for given interval.
