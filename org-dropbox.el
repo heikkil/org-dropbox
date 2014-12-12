@@ -184,14 +184,12 @@ But, see the code about subtrees..."
                            (buffer-string)))
       (setq mtime (org-dropbox-get-mtime file))
 
-      ;; massage the contents into list of lines
+      ;; massage the contents into list of lines -- optimise later
       ;;
       ;; remove tabs
       (setq file-content (replace-regexp-in-string "\t" "" file-content))
-      ;; split some long lines
-      (setq file-content (replace-regexp-in-string " - " "\n" file-content))
-      (setq file-content (replace-regexp-in-string "! " "\n" file-content))
-      (setq file-content (replace-regexp-in-string ": " "\n" file-content))
+      ;; split some long title lines
+      (setq file-content (replace-regexp-in-string " ?[-!:|] " "\n" file-content))
       ;; separate link from title
       (setq file-content (replace-regexp-in-string " *http:" "\nhttp:" file-content))
       ;; remove newly added new lines from the beginning of the string, if any
