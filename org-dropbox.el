@@ -1,12 +1,14 @@
-;;; org-dropbox.el --- move Dropbox shared notes from Android into org-mode datetree
+;;; org-dropbox.el --- move notes from phone through Dropbox into org-mode datetree
 
 ;;; Copyright (C) 2014 Heikki Lehvaslaiho <heikki.lehvaslaiho@gmail.com>
 
 ;; URL: https://github.com/heikkil/org-dropbox
 ;; Author: Heikki Lehvaslaiho <heikki.lehvaslaiho@gmail.com>
 ;; Version: 20140923
-;; Package-Requires: ((org-mode "8.2"))
+;; Package-Requires: ((org-mode "8.2") (emacs "24"))
 ;; Keywords: Dropbox Android notes org-mode
+
+;;; (names "0.5") ?http://endlessparentheses.com/introducing-names-practical-namespaces-for-emacs-lisp.html
 
 ;;; Commentary:
 ;;
@@ -14,7 +16,7 @@
 ;;
 ;; I wanted to collect together all interesting articles I saw reading
 ;; news on my phone applications. I was already using Org mode to keep
-;; notes.
+;; notes in my computer.
 ;;
 ;; The [[http://orgmode.org/manual/MobileOrg.html][MobileOrg]] app in
 ;; my Android phone is fiddly and does not do things the way I want,
@@ -30,16 +32,16 @@
 ;; text files -- a good starting point for including them into
 ;; org-mode.
 ;;
-;; Org-mode has date-ordered hierachical file structure called
+;; Org mode has a date-ordered hierachical file structure called
 ;; datetree that is ideal for storing notes and links. This
-;; org-dropbox-mode code reads each Dropbox note in the note folder,
+;; org-dropbox-mode code reads each note in the Dropbox notes folder,
 ;; formats them to an org element, and refiles them to a correct place
 ;; in a datetree file for easy searching through org-agenda commands.
 ;;
-;; Each new org headline element has an inactive timestamp that
+;; Each new org headline element gets an inactive timestamp that
 ;; corresponds to the last modification time of the note file.
 ;;
-;; The file system locations are determined by two customizable
+;; The locations in the filesystem are determined by two customizable
 ;; variables -- by default both pointing inside Dropbox:
 ;;
 ;; #+BEGIN_EXAMPLE
@@ -49,15 +51,22 @@
 ;;
 ;; Since different programmes format the shared link differently, the
 ;; code tries its best to make sense of them. A typical note has the
-;; name of the article in the first line and the link following
+;; name of the article in the first line and the link following it
 ;; separated by one or two newlines. The name is put to the header,
 ;; multiple new lines are reduced to one, and the link is followed by
 ;; the timestamp. If the title uses dashes (' - '), exclamation marks
 ;; ('! '), or colons (': '), they are replaced by new lines to wrap
-;; the long text into the body. In cases when there is no text before
-;; the link, the basename of the note file is used as the header.
+;; the trailing text into the body. In cases where there is no text
+;; before the link, the basename of the note file is used as the
+;; header.
 ;;
-;; A parsed file is removed from the note directory.
+;; After parsing, the source file is removed from the note directory.
+;;
+;; Note that most of the time the filename is ignored. The only
+;; absolute requirement for the filename is that it has to be unique
+;; within the directory. Filename is used as an entry header only if
+;; the file does not contain anything usefull, i.e. the content is
+;; plain URL.
 ;;
 ;; ** Usage
 ;;
@@ -69,7 +78,7 @@
 ;;
 ;; The processing of notes starts when you enable the minor mode
 ;; org-dropbox-mode in Emacs, and stops when you disable it. After
-;; every refiler run a message is printed out giving the number of
+;; every refiler run, a message is printed out giving the number of
 ;; notes processed.
 ;;
 ;; An internal timer controls the periodic running of the notes
@@ -80,10 +89,10 @@
 ;; ** Disclaimer
 ;;
 ;; This is first time I have written any reasonable amount of lisp
-;; code, so writing a whole package was jump in the dark. The code has
+;; code, so writing a whole package was a jump in the dark. The code has
 ;; been running reliably for some time now, but if you want to try the
-;; code and be absolutely certain you do not loose your notes, comment
-;; statement =(delete-file file)= from the code.
+;; code and be absolutely certain you do not lose your notes, comment
+;; expression =(delete-file file)= from the code.
 ;;
 ;; There are undoubtedly many things that can be done better. Feel
 ;; free to raise issues and submit pull requests.
@@ -97,12 +106,12 @@
 ;; it under the terms of the GNU General Public License as published by
 ;; the Free Software Foundation, either version 3 of the License, or
 ;; (at your option) any later version.
-
+;;
 ;; This program is distributed in the hope that it will be useful,
 ;; but WITHOUT ANY WARRANTY; without even the implied warranty of
 ;; MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
 ;; GNU General Public License for more details.
-
+;;
 ;; You should have received a copy of the GNU General Public License
 ;; along with this program. If not, see <http://www.gnu.org/licenses/>.
 
@@ -142,12 +151,12 @@ mode.
   :type 'directory)
 
 (defcustom org-dropbox-datetree-file "~/Dropbox/org/reference.org"
-  "File containing the datetree to store formatted notes."
+  "File containing the datetree file to store formatted notes."
   :group 'org
   :type 'file)
 
 (defcustom org-dropbox-refile-timer-interval (* 60 60)
-  "Repeat refiling every N seconds. Defaults to 3600 min = 1 h"
+  "Repeat refiling every N seconds. Defaults to 3600 sec = 1 h"
   :group 'org
   :type 'int)
 
