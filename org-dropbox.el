@@ -4,7 +4,7 @@
 
 ;; URL: https://github.com/heikkil/org-dropbox
 ;; Author: Heikki Lehvaslaiho <heikki.lehvaslaiho@gmail.com>
-;; Version: 20141212
+;; Version: 20141213
 ;; Package-Requires: ((dash "2.2") (names "0.5") (org-mode "8.2") (emacs "24"))
 ;; Keywords: Dropbox Android notes org-mode
 
@@ -141,7 +141,7 @@ mode.
       (refile-timer-start)
     (refile-timer-stop)))
 
-(defconst version "20141212"
+(defconst version "20141213"
   "Version for org-dropbox")
 
 (defcustom note-dir "~/Dropbox/notes/"
