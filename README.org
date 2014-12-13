@@ -1,5 +1,9 @@
  org-dropbox.el --- move Dropbox notes from phone into org-mode datetree
 
+This minor mode syncs DropBox notes from mobile devices into org
+datetree file that can be part of org agenda. The minor mode starts
+a daemon that periodically scans the note directory.
+
 ** Justification
 
 I wanted to collect together all interesting articles I saw reading
