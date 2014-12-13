@@ -170,7 +170,7 @@ But, see the code about subtrees..."
   (org-datetree-find-date-create
    (list (nth 4 date) (nth 3 date) (nth 5 date)))
   (show-subtree)
-  (next-line)
+  (forward-line)
   (beginning-of-line)
   (insert txt))
 
@@ -232,6 +232,8 @@ But, see the code about subtrees..."
     (when (file-exists-p datetree-file)
       (setq buffername (buffer-name (find-file-noselect datetree-file)))
       (notes-to-datetree note-dir buffername))))
+
+(defvar refile-timer)
 
 (defun refile-timer-start ()
   "Start running the refiler while pausing for given interval.
