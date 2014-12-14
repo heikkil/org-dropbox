@@ -247,7 +247,7 @@ repeat interval. The value is in seconds."
   (setq refile-timer
         (run-with-timer 0
                         refile-timer-interval
-                        'org-dropbox-refile-notes)))
+                        #'refile-notes)))
 
 (defun refile-timer-stop ()
   "Stop running the refiler."
