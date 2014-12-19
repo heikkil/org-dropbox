@@ -4,7 +4,7 @@
 
 ;; URL: https://github.com/heikkil/org-dropbox
 ;; Author: Heikki Lehvaslaiho <heikki.lehvaslaiho@gmail.com>
-;; Version: 20141213
+;; Version: 20141219
 ;; Package-Requires: ((dash "2.2") (names "0.5") (emacs "24"))
 ;; Keywords: Dropbox Android notes org-mode
 
@@ -145,8 +145,8 @@ mode.
       (refile-timer-start)
     (refile-timer-stop)))
 
-(defconst version "20141213"
-  "Version for org-dropbox")
+(defconst version "20141219"
+  "Version for org-dropbox.")
 
 (defcustom note-dir "~/Dropbox/notes/"
   "Directory where Dropbox shared notes are added."
@@ -159,7 +159,7 @@ mode.
   :type 'file)
 
 (defcustom refile-timer-interval (* 60 60)
-  "Repeat refiling every N seconds. Defaults to 3600 sec = 1 h"
+  "Repeat refiling every N seconds.  Defaults to 3600 sec = 1 h."
   :group 'org
   :type 'int)
 
@@ -243,8 +243,8 @@ But, see the code about subtrees..."
 (defun refile-timer-start ()
   "Start running the refiler while pausing for given interval.
 
-The variable refile-timer-interval determines the
-repeat interval. The value is in seconds."
+The variable refile-timer-interval determines the repeat interval.
+The value is in seconds."
   (setq refile-timer
         (run-with-timer 0
                         refile-timer-interval
@@ -255,7 +255,7 @@ repeat interval. The value is in seconds."
   (cancel-timer refile-timer))
 
 (defun version ()
-  "Tell the version"
+  "Tell the version."
   (interactive)
   (message version))) ; closing names
 
