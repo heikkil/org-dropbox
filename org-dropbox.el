@@ -196,13 +196,13 @@ But, see the code about subtrees..."
       (setq file-content (->> (with-current-buffer
                                   (find-file-noselect file)
                                 (buffer-string))
-                           (replace-regexp-in-string "\t" "") ; remove tabs
-                           (replace-regexp-in-string " ?[-!:|] " "\n") ; split some long title lines
-                           (replace-regexp-in-string " *http:" "\nhttp:") ; separate link from title
-                           (replace-regexp-in-string "\n+" "\n") ; remove successive newlines
-                           (replace-regexp-in-string "^\n" "") ; remove new line as first char
-                           (replace-regexp-in-string "\n$" "") ; remove new line as last char
-                           ))
+                              (replace-regexp-in-string "\t" "") ; remove tabs
+                              (replace-regexp-in-string " ?[-!–:—|] " "\n") ; split some long title lines
+                              (replace-regexp-in-string " *http:" "\nhttp:") ; separate link from title
+                              (replace-regexp-in-string "\n+" "\n") ; remove successive newlines
+                              (replace-regexp-in-string "^\n" "") ; remove new line as first char
+                              (replace-regexp-in-string "\n$" "") ; remove new line as last char
+                              ))
       ;; list of lines from string
       (setq lines (split-string file-content "\n"))
       ;; create org header text to first element of lines
