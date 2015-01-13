@@ -98,12 +98,6 @@
 ;;
 ;; There are undoubtedly many things that can be done better. Feel
 ;; free to raise issues and submit pull requests.
-;;
-;; ** ToDo
-;;
-;; Find a way to add entries as the last rather than first childrens
-;; of the day header.
-;;
 
 
 ;; This file is not a part of GNU Emacs.
@@ -166,17 +160,17 @@ mode.
 (defun datetree-file-entry-under-date (txt date)
   "Insert a node TXT into the date tree under DATE.
 
-Original - and functional - version of the
-`org-datetree-file-entry-under' function in org-datetree.el.
-from (xxxxx?)
-Only slightly modified.
-But, see the code about subtrees..."
+After insertion sorts entries under DATE based on the timestamp."
   (org-datetree-find-date-create
    (list (nth 4 date) (nth 3 date) (nth 5 date)))
   (show-subtree)
   (forward-line)
   (beginning-of-line)
-  (insert txt))
+  (insert txt)
+  ;; move up to the day header
+  (outline-up-heading 1)
+  ;; sort children by the first timestamp
+  (org-sort-entries nil ?t))
 
 (defun get-mtime (buffer-file-name)
   "Get the modification time of a file (BUFFER-FILE-NAME)."
