@@ -1,5 +1,7 @@
  org-dropbox.el --- move Dropbox notes from phone into org-mode datetree
 
+[[http://melpa.org/#/org-dropbox][http://melpa.org/packages/org-dropbox-badge.svg]]
+
 This minor mode syncs DropBox notes from mobile devices into org
 datetree file that can be part of org agenda. The minor mode starts
 a daemon that periodically scans the note directory.
