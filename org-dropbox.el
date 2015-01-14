@@ -5,7 +5,7 @@
 ;; URL: https://github.com/heikkil/org-dropbox
 ;; Author: Heikki Lehvaslaiho <heikki.lehvaslaiho@gmail.com>
 ;; Version: 20141219
-;; Package-Requires: ((dash "2.2") (names "0.5") (emacs "24"))
+;; Package-Requires: ((dash "2.2") (names "20150000") (emacs "24"))
 ;; Keywords: Dropbox Android notes org-mode
 
 ;;; Commentary:
@@ -123,6 +123,9 @@
 
 ;;;###autoload
 (define-namespace org-dropbox-
+:package org-dropbox
+:group org
+:version "1.2"
 
 :autoload
 (define-minor-mode mode
@@ -139,22 +142,16 @@ mode.
       (refile-timer-start)
     (refile-timer-stop)))
 
-(defconst version "20141219"
-  "Version for org-dropbox.")
-
 (defcustom note-dir "~/Dropbox/notes/"
   "Directory where Dropbox shared notes are added."
-  :group 'org
   :type 'directory)
 
 (defcustom datetree-file "~/Dropbox/org/reference.org"
   "File containing the datetree file to store formatted notes."
-  :group 'org
   :type 'file)
 
 (defcustom refile-timer-interval (* 60 60)
   "Repeat refiling every N seconds.  Defaults to 3600 sec = 1 h."
-  :group 'org
   :type 'int)
 
 (defun datetree-file-entry-under-date (txt date)
@@ -248,10 +245,7 @@ The value is in seconds."
   "Stop running the refiler."
   (cancel-timer refile-timer))
 
-(defun version ()
-  "Tell the version."
-  (interactive)
-  (message version))) ; closing names
+); closing names
 
 (provide 'org-dropbox)
 ;;; org-dropbox.el ends here
