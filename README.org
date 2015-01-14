@@ -1,4 +1,4 @@
- org-dropbox.el --- move Dropbox notes from phone into org-mode datetree
+* org-dropbox.el --- move Dropbox notes from phone into org-mode datetree
 
 [[http://melpa.org/#/org-dropbox][http://melpa.org/packages/org-dropbox-badge.svg]]
 
@@ -91,8 +91,4 @@ form =(delete-file file)= from the code.
 There are undoubtedly many things that can be done better. Feel
 free to raise issues and submit pull requests.
 
-** ToDo
-
-Find a way to add entries as the last rather than first childrens
-of the day header.
 
